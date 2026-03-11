@@ -53,15 +53,19 @@ def get_activity(activity_id):
 
 
 def format_post(activity):
+
+    print(f"🔍 Full activity data: {json.dumps(activity, indent=2)}")
+
     """Turn a Strava activity dict into a Bluesky post string."""
-    name      = activity.get("name", "Workout")
-    a_type    = activity.get("sport_type") or activity.get("type", "Activity")
-    distance  = activity.get("distance", 0)          # meters
-    moving    = activity.get("moving_time", 0)        # seconds
-    elevation = activity.get("total_elevation_gain", 0)  # meters
-    calories  = activity.get("calories")
-    hr        = activity.get("average_heartrate")
-    kudos     = activity.get("kudos_count", 0)
+    name        = activity.get("name", "Workout")
+    a_type      = activity.get("sport_type") or activity.get("type", "Activity")
+    distance    = activity.get("distance", 0)          # meters
+    moving      = activity.get("moving_time", 0)        # seconds
+    elevation   = activity.get("total_elevation_gain", 0)  # meters
+    calories    = activity.get("calories")
+    hr          = activity.get("average_heartrate")
+    kudos       = activity.get("kudos_count", 0)
+    description = activity.get("description")
 
     # Convert units
     miles     = distance / 1609.34
@@ -110,8 +114,14 @@ def format_post(activity):
         lines.append(f"❤️ {hr:.0f} bpm avg HR")
     if calories:
         lines.append(f"🔥 {int(calories)} cal")
-
-    lines.append("#Strava")
+    if description:
+        lines.append(f"📝 {description}")
+  
+    activity_url = f"https://www.strava.com/activities/{activity.get('id')}"
+    lines.append(f"🔗 {activity_url}")
+    
+    lines.append("Logged and posted automatically 🤖")
+    lines.append("#Strava #python #github")
 
     return "\n".join(lines)
 
